@@ -57,10 +57,20 @@
 
             const form = document.getElementById("form");
             form.addEventListener("submit", function (event) {
-                event.preventDefault();
+              event.preventDefault();
 
+              if (document.getElementById("fileInput").value) {
                 sendData();
+              }
             });
+
+            document.getElementById("fileInput").addEventListener('change', (event) => {
+              //document.getElementById("form").submit();
+              if (document.getElementById("fileInput").value) {
+                sendData();
+              }
+            });
+
         });
 
 
@@ -73,16 +83,17 @@
     <div style="padding: 2em; ">
     <form id="form">
         <p>
-            <label for="file">headered SMW .smc file:</label>
-            <input id="file" name="file" type="file">
+            <label for="fileInput">headered SMW .smc file or .bps:</label>
+            <input id="fileInput" name="file" type="file">
         </p>
-        <input type="submit" value="List music">
     </form>
     <div id="results"></div>
     <div style="height: 5em"></div>
     </div>
 
-    <div style="position: fixed; padding-left: 5em; padding-bottom: 0.5em; padding-top: 0.5em; bottom: 0; width: 100%; background: #A0D4FF">Remade by spooonsss based on original code by dtothefourth<br/></div>
+    <div style="position: fixed; padding-left: 5em; padding-bottom: 0.5em; padding-top: 0.5em; bottom: 0; width: 100%; background: #A0D4FF">Remade by spooonsss based on original code by dtothefourth<br/>
+    <img src="ballandchain.gif" style="display: none;">
+    </div>
 </body>
 
 </html>
