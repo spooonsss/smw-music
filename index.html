@@ -2,7 +2,7 @@
 <html>
 
 <head>
-		<link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 
     <title></title>
 
@@ -23,7 +23,12 @@
                     method: 'POST',
                     body: FD
                 })
-                .then(response => response.json())
+                .then(response => {
+                  if (!response.ok) {
+                     return response.text().then(text => { throw text; });
+                  }
+                  return response.json();
+                })
                 .then(data => {
                     results.innerHTML = '';
                     data['songs_'].forEach(function (song) {
@@ -77,7 +82,7 @@
     <div style="height: 5em"></div>
     </div>
 
-    <div style="position: fixed; padding-left: 5em; padding-bottom: 0.5em; padding-top: 0.5em; bottom: 0; width: 100%; background: #A0D4FF">Remade by spooonsss from original code by dtothefourth<br/></div>
+    <div style="position: fixed; padding-left: 5em; padding-bottom: 0.5em; padding-top: 0.5em; bottom: 0; width: 100%; background: #A0D4FF">Remade by spooonsss based on original code by dtothefourth<br/></div>
 </body>
 
 </html>
