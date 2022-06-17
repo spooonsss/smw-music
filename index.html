@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+
+<head>
+    <title></title>
+
+    <script>
+
+        window.addEventListener("load", function () {
+            function sendData() {
+                const XHR = new XMLHttpRequest();
+                const FD = new FormData(form);
+
+                var results = document.getElementById("results");
+                results.innerHTML = '';
+                var img = document.createElement('img');
+                img.setAttribute('src', 'ballandchain.gif');
+                results.appendChild(img);
+
+                fetch('https://bkx8dos410.execute-api.us-east-1.amazonaws.com/dev/get_song_data', {
+                    method: 'POST',
+                    body: FD
+                })
+                .then(response => response.json())
+                .then(data => {
+                    results.innerHTML = '';
+                    data['songs_'].forEach(function (song) {
+                        var div = document.createElement('div');
+                        var num = document.createElement('span');
+                        num.innerText = song.num.toString(16) + ' ';
+                        div.appendChild(num);
+                        if (song.url) {
+                            var a = document.createElement('a');
+                            a.setAttribute('href', song.url)
+                            a.innerText = song.name;
+                            div.appendChild(a);
+                        } else {
+                            var name = document.createElement('span');
+                            name.innerText = song.name;
+                            div.appendChild(name);
+                        }
+                        results.appendChild(div);
+                    });
+                })
+                .catch(error => {
+                    results.innerHTML = '';
+                    results.innerHTML = error;
+                });
+            }
+
+            const form = document.getElementById("form");
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                sendData();
+            });
+        });
+
+
+    </script>
+    <style>
+    </style>
+</head>
+
+<body bgcolor="#F3FBFF" style="margin: 0">
+    <div style="padding: 2em; ">
+    <form id="form">
+        <p>
+            <label for="file">headered SMW .smc file:</label>
+            <input id="file" name="file" type="file">
+        </p>
+        <input type="submit" value="List music">
+    </form>
+    <div id="results"></div>
+    <div style="height: 5em"></div>
+    </div>
+
+    <div style="position: fixed; padding-left: 5em; padding-bottom: 0.5em; padding-top: 0.5em; bottom: 0; width: 100%; background: #A0D4FF">Remade by spooonsss from original code by dtothefourth<br/></div>
+</body>
+
+</html>
