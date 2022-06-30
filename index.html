@@ -11,15 +11,32 @@
     <script>
 
         window.addEventListener("load", function () {
-            function sendData() {
+            var endpoint = 'https://bkx8dos410.execute-api.us-east-1.amazonaws.com/dev';
+            if (window.location.origin.indexOf('localhost') !== -1) {
+                endpoint = 'http://localhost:5000';
+            }
+            if (window.location.hash.length > 2) {
+                const sha1 = window.location.hash.substring(1);
+                var get_song_data = fetch(endpoint + '/get_saved_song_data/' + sha1, {method: 'POST'});
+                const get_level_songs = fetch(endpoint + '/get_saved_level_songs/' + sha1, {method: 'POST'});
+                sendData(get_song_data, get_level_songs);
+            }
+            function sendFormData() {
                 const XHR = new XMLHttpRequest();
                 const FD = new FormData(form);
+                window.location.hash = '';
+                var get_song_data = fetch(endpoint + '/get_song_data', {
+                    method: 'POST',
+                    body: FD
+                });
+                const get_level_songs = fetch(endpoint + '/get_level_songs', {
+                    method: 'POST',
+                    body: FD
+                });
+                sendData(get_song_data, get_level_songs);
+            }
 
-                var endpoint = 'https://bkx8dos410.execute-api.us-east-1.amazonaws.com/dev';
-                if (window.location.origin.indexOf('localhost') !== -1) {
-                    endpoint = 'http://localhost:5000';
-                }
-
+            function sendData(get_song_data, get_level_songs) {
                 var results_parent = document.getElementById("results");
                 results_parent.innerHTML = '';
                 var results = document.createElement('div');
@@ -37,7 +54,7 @@
                 var song_divs = {};
                 var set_level_data = () => {
                     const maybe_hex = (level) => {
-                        if (typeof value === 'number') {
+                        if (typeof level === 'number') {
                             return level.toString(16).toUpperCase();
                         }
                         return level;
@@ -58,11 +75,7 @@
                     });
                 };
 
-                fetch(endpoint + '/get_song_data', {
-                    method: 'POST',
-                    body: FD
-                })
-                .then(response => {
+                get_song_data.then(response => {
                     if (!response.ok) {
                         return response.text().then(text => { throw text; });
                     }
@@ -94,6 +107,7 @@
                     link.setAttribute('href', 'https://smwdb.me/db/' + data['sha1'][0] + '/' + data['sha1'] + '/');
                     link.innerText = 'smwdb.me entry';
                     results.appendChild(link);
+                    window.location.hash = data['sha1'];
                     song_data_done = true;
                     if (level_songs) {
                         set_level_data();
@@ -105,11 +119,7 @@
                     song_data_done = true;
                 });
 
-
-                fetch(endpoint + '/get_level_songs', {
-                    method: 'POST',
-                    body: FD
-                })
+                get_level_songs
                 .then(response => {
                     if (!response.ok) {
                         return response.text().then(text => { throw text; });
@@ -133,14 +143,14 @@
                 event.preventDefault();
 
                 if (document.getElementById("fileInput").value) {
-                    sendData();
+                    sendFormData();
                 }
             });
 
             document.getElementById("fileInput").addEventListener('change', (event) => {
                 //document.getElementById("form").submit();
                 if (document.getElementById("fileInput").value) {
-                    sendData();
+                    sendFormData();
                 }
             });
 
