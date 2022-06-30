@@ -6,7 +6,7 @@
 
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 
-    <title></title>
+    <title>SMW music</title>
 
     <script>
 
@@ -14,6 +14,11 @@
             function sendData() {
                 const XHR = new XMLHttpRequest();
                 const FD = new FormData(form);
+
+                var endpoint = 'https://bkx8dos410.execute-api.us-east-1.amazonaws.com/dev';
+                if (window.location.origin.indexOf('localhost') !== -1) {
+                    endpoint = 'http://localhost:5000';
+                }
 
                 var results_parent = document.getElementById("results");
                 results_parent.innerHTML = '';
@@ -31,18 +36,29 @@
                 var level_songs = undefined;
                 var song_divs = {};
                 var set_level_data = () => {
+                    const maybe_hex = (level) => {
+                        if (typeof value === 'number') {
+                            return level.toString(16).toUpperCase();
+                        }
+                        return level;
+                    };
+                    const describe = (level) => {
+                        if (level_songs['_level_names'] && level_songs['_level_names'][level]) {
+                            return level_songs['_level_names'][level] + ' (' + maybe_hex(level) + ')';
+                        }
+                        return maybe_hex(level);
+                    };
                     Object.getOwnPropertyNames(level_songs).forEach(song => {
                         var div = song_divs[song];
                         if (div) {
                             var rooms = document.createElement('span');
-                            rooms.innerText = ' (Used in ' + level_songs[song].map(x => x.toString(16)).join(', ') + ')';
+                            rooms.innerText = ' (Used in ' + level_songs[song].map(describe).join(', ') + ')';
                             div.appendChild(rooms);
                         }
                     });
                 };
 
-                fetch('https://bkx8dos410.execute-api.us-east-1.amazonaws.com/dev/get_song_data', {
-                    // fetch('http://127.0.0.1:5000/get_song_data', {
+                fetch(endpoint + '/get_song_data', {
                     method: 'POST',
                     body: FD
                 })
@@ -73,6 +89,11 @@
                         }
                         results.appendChild(div);
                     });
+                    var link = document.createElement('a');
+                    // e.g. https://smwdb.me/db/4/4ed816627de52002b6f17e20965499bffcc88fc7/
+                    link.setAttribute('href', 'https://smwdb.me/db/' + data['sha1'][0] + '/' + data['sha1'] + '/');
+                    link.innerText = 'smwdb.me entry';
+                    results.appendChild(link);
                     song_data_done = true;
                     if (level_songs) {
                         set_level_data();
@@ -85,8 +106,7 @@
                 });
 
 
-                // fetch('http://127.0.0.1:5000/get_level_songs', {
-                fetch('https://bkx8dos410.execute-api.us-east-1.amazonaws.com/dev/get_level_songs', {
+                fetch(endpoint + '/get_level_songs', {
                     method: 'POST',
                     body: FD
                 })
@@ -136,7 +156,7 @@
     <div style="padding: 2em; ">
         <form id="form">
             <p>
-                <label for="fileInput">headered SMW .smc file or .bps:</label>
+                <label for="fileInput">SMW .smc file or .bps:</label>
                 <input id="fileInput" name="file" type="file">
             </p>
         </form>
