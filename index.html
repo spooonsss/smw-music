@@ -7,7 +7,17 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 
     <title>SMW music</title>
-
+    <style type="text/css">
+        .songNum { 
+            min-width: 1.5em;
+            color: #777;
+            display: inline-block;
+        }
+        a {
+            text-decoration-color: #A0D4FF60;
+        }
+    </style>
+  
     <script>
 
         window.addEventListener("load", function () {
@@ -92,6 +102,7 @@
                         song_divs[song.num] = div;
                         var num = document.createElement('span');
                         num.innerText = song.num.toString(16) + ' ';
+                        num.classList.add('songNum');
                         div.appendChild(num);
                         if (song.url) {
                             var a = document.createElement('a');
@@ -113,7 +124,9 @@
                         results.appendChild(link);
                     }
 
-                    window.location.hash = encodeURIComponent(saved_filename || data['sha1']);
+                    if (data['_good_filename']) {
+                        window.location.hash = encodeURIComponent(saved_filename || data['sha1']);
+                    }
                     song_data_done = true;
                     if (level_songs) {
                         set_level_data();
