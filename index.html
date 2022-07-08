@@ -13,6 +13,10 @@
             color: #777;
             display: inline-block;
         }
+        .filename_div {
+            margin-bottom: 0.5em;
+            font-size: 1.3em;
+        }
         a {
             text-decoration-color: #A0D4FF60;
         }
@@ -96,6 +100,10 @@
                 })
                 .then(data => {
                     results.innerHTML = '';
+                    var filename_div = document.createElement('div');
+                    results.appendChild(filename_div);
+                    filename_div.classList.add('filename_div');
+                    filename_div.innerHTML = 'Song list for ' + (saved_filename || data['sha1']);
                     data['songs_'].forEach(function (song) {
                         var div = document.createElement('div');
                         // var songid = /\w+/.exec(song.name)[0];
@@ -185,7 +193,7 @@
 
 <body bgcolor="#F3FBFF" style="margin: 0">
     <div style="padding: 2em; ">
-        <div id="results"></div>
+        <div id="results" class="song_results"></div>
         <div id="level_results"></div>
         <form id="form">
             <p>
