@@ -8,7 +8,7 @@
 
     <title>SMW music</title>
     <style type="text/css">
-        .songNum { 
+        .songNum {
             min-width: 1.5em;
             color: #777;
             display: inline-block;
@@ -20,8 +20,28 @@
         a {
             text-decoration-color: #A0D4FF60;
         }
+
+        .copy_link_text {
+            text-decoration: underline;
+        }
+
+        .copy_link {
+            font-size: initial;
+            text-decoration-color: #777;
+            color: #777;
+            padding-left: 1em;
+        }
+
+        .copy_link div {
+            display: inline;
+            text-decoration: none;
+            color: #000;
+            opacity: 1;
+            -webkit-transition: opacity 1000ms linear;
+            transition: opacity 1000ms linear;
+        }
     </style>
-  
+
     <script>
 
         window.addEventListener("load", function () {
@@ -104,6 +124,30 @@
                     results.appendChild(filename_div);
                     filename_div.classList.add('filename_div');
                     filename_div.innerHTML = 'Song list for ' + (saved_filename || data['sha1']);
+                    // return await
+
+                    var copy_div = document.createElement('span');
+                    filename_div.appendChild(copy_div);
+                    copy_div.classList.add('copy_link');
+                    var copy_div_text = document.createElement('span');
+                    copy_div.appendChild(copy_div_text);
+                    copy_div_text.classList.add('copy_link_text');
+                    copy_div.addEventListener('click', () =>
+                        {
+                            navigator.clipboard.writeText(window.location).then(x => {
+                                var copied_div = document.createElement('div');
+                                copy_div.appendChild(copied_div);
+                                copied_div.innerText = ' copied!';
+                                setTimeout(() => {
+                                    copied_div.style.opacity = 0;
+                                    setTimeout(() => {
+                                        copied_div.remove();
+                                    }, 1000);
+                                }, 1000);
+                            });
+                        });
+                    copy_div_text.innerText = 'copy link';
+
                     data['songs_'].forEach(function (song) {
                         var div = document.createElement('div');
                         // var songid = /\w+/.exec(song.name)[0];
